@@ -1,0 +1,170 @@
+$pristine: $foreground;
+$dirty: $foreground;
+$touched: $foreground;
+$valid: $foreground;
+$invalid: #AC3C72;
+
+%btn--disabled-negative {
+	background: rgb(125, 125, 125);
+	color: white;
+}
+
+%label-negative {
+	color: #ffffff;
+}
+
+%placeholder-negative {
+	color: rgba($foreground, 0.5);
+}
+
+%group--form-negative {
+	label {
+		@extend %label-negative;
+	}
+}
+
+@mixin autofill-negative($color: black, $background: white, $borderColor: transparent) {
+	background: $background;
+	color: $color;
+	border-color: $borderColor;
+
+	&:-webkit-autofill,
+	&:-webkit-autofill:hover,
+	&:-webkit-autofill:focus {
+		background: $background;
+		color: $color;
+		border-color: $borderColor;
+		-webkit-text-fill-color: $color;
+		box-shadow: 0 0 0px 1000px $background inset;
+	}
+
+	&::placeholder {
+		@extend %placeholder-negative;
+	}
+}
+
+%control--text-negative {
+	@include autofill-negative($foreground, #ffffff);
+	background: #ffffff;
+	border-color: rgba(#152154, 0.4);
+	color: $foreground;
+
+	&.pristine {
+		color: $pristine;
+	}
+
+	&.dirty {
+		color: $dirty;
+	}
+
+	&.touched {
+		color: $touched;
+	}
+
+	&.valid {
+		border-color: rgba(#152154, 0.4);
+		color: $valid;
+	}
+
+	&.invalid:not(.pristine) {
+		color: $invalid;
+	}
+}
+
+.form--negative {
+
+	.group--error {
+		border-color: white;
+		color: white;
+	}
+
+	.group--form {
+		@extend %group--form-negative;
+	}
+
+	.control--text {
+		@extend %control--text-negative;
+	}
+
+	.group--form--textarea {
+		@extend %group--form-negative;
+	}
+
+	.group--form--select {
+		@extend %group--form-negative;
+
+		.caret-down {
+			fill: rgba(#004987, 0.5);
+		}
+	}
+
+	.control--select {
+		@extend %control--text-negative;
+	}
+
+	.group--form--checkbox {
+		@extend %group--form-negative;
+
+		input {
+			border-color: $pristine;
+
+			&:checked {
+				background: $pristine;
+			}
+		}
+	}
+
+	.group--form--file {
+		@extend %group--form-negative;
+		background: $background-secondary;
+
+		.icon--upload {
+			fill: $pristine;
+		}
+	}
+
+	.control--file {
+		color: transparent;
+		background: rgba(0, 1, 0, 0.2);
+	}
+
+	errors-component {
+		.inner {
+			background: rgba(0, 0, 0, 0.15);
+			color: white;
+		}
+	}
+
+	.group--form--results {
+		background: rgba(255, 255, 255, 0.8);
+	}
+
+	.required {
+		.required__badge {
+			@extend %label-negative;
+		}
+	}
+
+
+	.btn--submit {
+
+		&:before {
+			background: #ffffff;
+		}
+
+		&:after {
+			color: #004987;
+		}
+
+		&,
+		&:active,
+		&:focus,
+		&:visited,
+		&:hover {
+			background: transparent;
+			border-color: #ffffff;
+			color: #ffffff;
+		}
+	}
+
+}

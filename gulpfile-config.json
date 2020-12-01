@@ -1,0 +1,49 @@
+﻿{
+  "targets": {
+    "browser": {
+      "compile": [
+        {
+          "input": "src/*.html",
+          "output": "docs/",
+          "minify": true
+        },
+        {
+          "input": "src/css/main.scss",
+          "output": "docs/css/main.css",
+          "minify": true
+        },
+        {
+          "input": "src/js/main.js",
+          "output": {
+            "file": "docs/js/main.js",
+            "format": "umd"
+          },
+          "globals": {
+            "rxjs": "rxjs",
+            "rxjs/operators": "rxjs.operators",
+            "rxcomp": "rxcomp"
+          },
+          "minify": true
+        }
+      ],
+      "bundle": [
+        {
+          "input": [
+            "node_modules/rxjs/bundles/rxjs.umd.js",
+            "node_modules/rxcomp/dist/iife/rxcomp.js"
+          ],
+          "output": "docs/js/vendors.js",
+          "minify": true
+        }
+      ]
+    }
+  },
+  "tfs": false,
+  "server": {
+    "root": "./docs",
+    "path": "/mutina-panovr/",
+    "host": "0.0.0.0",
+    "port": 42345,
+    "log": false
+  }
+}

@@ -1,0 +1,24 @@
+{
+	"author": "Luca Zampetti <lzampetti@gmail.com>",
+	"name": "mutina-panovr",
+	"description": "mutina-panovr",
+	"version": "1.0.0",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/actarian/mutina-panovr.git"
+	},
+	"engines": {
+		"node": "10.x"
+	},
+	"scripts": {
+		"start": "node dist/server/main.js"
+	},
+	"dependencies": {
+		"rxjs": "6.6.3",
+		"rxcomp": "1.0.0-beta.20"
+	},
+	"devDependencies": {
+		"gulpfile-config": "1.0.0-alpha.14"
+	}
+}

@@ -1,0 +1,61 @@
+html {
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	overflow-x: hidden;
+	overflow-y: auto;
+	overscroll-behavior: none;
+	scroll-behavior: smooth;
+	@include scrollbar();
+	--vh: 1vh;
+}
+
+body {
+	width: 100%;
+	min-height: 100%;
+	margin: 0;
+	padding: 0;
+
+	&.fixed {
+		position: fixed;
+	}
+}
+
+.page {
+	@include media-down(xs) {
+		display: flex;
+		flex-direction: column;
+
+		& > header {
+			order: 1;
+		}
+		& > section {
+			order: 2;
+		}
+		& > footer {
+			order: 3;
+		}
+	}
+}
+
+img {
+	display: block;
+	max-width: 100%;
+}
+
+[unselectable] {
+	-webkit-touch-callout: none;
+	user-select: none;
+}
+
+.app {
+	position: relative;
+
+	svg {
+		fill: currentColor;
+	}
+}
+
+.hidden {
+	display: none;
+}

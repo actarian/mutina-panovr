@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tour start="node2" appversion="6.1.10" apprev="18007">
+  <panorama id="node2">
+    <input flat="1" width="4960" levelbias="0.400" levelingpitch="0" leveltileurl="tiles/node2/cf_%c/l_%l/c_%x/tile_%y.jpg" overlap="1" levelbiashidpi="1.000" cylinder="1" leveltilesize="512" height="3507" levelingroll="0">
+      <level width="4960" preload="0" predecode="0" height="3507"/>
+      <level width="2480" preload="0" predecode="0" height="1753"/>
+      <level width="1240" preload="0" predecode="0" height="876"/>
+      <level width="620" preload="0" predecode="0" height="438"/>
+      <level width="310" preload="1" predecode="1" height="219"/>
+      <preview color="0x808080"/>
+    </input>
+    <view pannorth="0" fovmode="0">
+      <start pan="0" tilt="0" projection="4" fov="70"/>
+      <flyin pan="0" tilt="-90" projection="9" fov="170"/>
+      <min fovpixel="2" pan="0" tilt="-90"/>
+      <max fovfisheye="360" pan="360" tilt="90" fov="120" scaletofit="1" fovstereographic="270"/>
+    </view>
+    <userdata author="" info="" latitude="" comment="" heading="0" nodeid="node2" copyright="" customnodeid="" longitude="" source="" datetime="11/19/2020 9:16 AM" tags="Pano2VR6" description="" title=""/>
+    <hotspots width="180" height="20" wordwrap="1">
+      <label textcolor="0x000000" border="1" width="180" backgroundalpha="1" textalpha="1" bordercolor="0x000000" borderalpha="1" enabled="1" backgroundcolor="0xffffff" height="20" background="1" borderradius="1" wordwrap="1"/>
+      <polystyle mode="0" handcursor="1" backgroundalpha="0.25098" bordercolor="0x0000ff" borderalpha="1" backgroundcolor="0x0000ff"/>
+      <hotspot url="javascript:onClickedPin(0);" distance3D="102.87" target="_self" pan="10.36" tilt="-26.53" fov="10" customimageheight="18" use3D="0" skinid="ht_url" description="" customimagewidth="18" id="Point01" title="" customimage="media/pin.png"/>
+      <hotspot url="javascript:onClickedPin(1);" distance3D="102.87" target="_self" pan="40.78" tilt="0.53" fov="10" customimageheight="18" use3D="0" skinid="ht_url" description="" customimagewidth="18" id="Point02" title="" customimage="media/pin.png"/>
+    </hotspots>
+    <media/>
+    <transition type="crossdissolve" zoomspeed="2" softedge="0" zoomfov="20" zoomafterinfov="90" zoomin="0" zoomoutpause="1" zoomout="0" blendtime="1" zoomafteroutfov="20" enabled="1" blendcolor="0x000000"/>
+    <animation syncanimationwithvideo="0" useinautorotation="0" animsequence="Animation01"/>
+    <control lockedkeyboard="0" sensitivity="8" dblclickfullscreen="0" speedwheel="1" contextprojections="0" rubberband="0" lockedmouse="0" lockedwheel="0" invertwheel="0" contextfullscreen="1" lockedkeyboardzoom="0" hideabout="0" simulatemass="1" invertcontrol="1"/>
+  </panorama>
+  <masternode>
+    <userdata author="" info="" latitude="" comment="" heading="0" nodeid="master" copyright="" customnodeid="" longitude="" source="" datetime="" tags="" description="" title=""/>
+  </masternode>
+</tour>

@@ -1,0 +1,18 @@
+<!-- @@master = ./templates/layout.html { "baseHref": "/mutina-panovr/" } -->
+
+<!-- @@block = main-->
+
+<section class="section--panovr">
+	<div class="container">
+		<div class="panovr" panovr="/mutina-panovr/panovr/example/pano.xml">
+			<div class="inner">Loading...</div>
+			<div class="toast" (clickOutside)="onToastClose($event)" *if="item">
+				<div class="title" [innerHTML]="item.title"></div>
+				<div class="abstract" [innerHTML]="item.abstract"></div>
+				<div class="close" (click)="onToastClose($event)">x</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<!-- @@close-->

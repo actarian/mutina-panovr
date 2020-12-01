@@ -1,0 +1,45 @@
+
+body {
+	padding: 100px 0 0 0;
+}
+
+.panovr {
+	position: relative;
+	@include aspect-clip(2, 1);
+
+	&>.inner {
+		overflow: hidden;
+	}
+}
+
+.toast {
+	position: absolute;
+    top: 50%;
+    left: 50%;
+    background: rgba(0,0,0,0.85);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 10px;
+    width: 100%;
+    max-width: 400px;
+	transform: translateX(-50%) translateY(-50%);
+    z-index: 100;
+
+	.title {
+		font-weight: 600;
+	}
+
+	.close {
+		position: absolute;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		width: 20px;
+		height: 20px;
+		top: 5px;
+		right: 10px;
+		font-weight: 400;
+		line-height: 1;
+		cursor: pointer;
+	}
+}
