@@ -3542,6 +3542,12 @@ body {
     object-fit: cover; }
   .panovr > .inner {
     overflow: hidden; }
+  .panovr .hotspot {
+    display: block;
+    width: 20px;
+    height: 20px;
+    border-radius: 10px;
+    background: yellow; }
 
 .toast {
   position: absolute;

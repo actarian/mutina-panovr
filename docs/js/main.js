@@ -441,6 +441,9 @@ var PanoVRComponent = /*#__PURE__*/function (_Component) {
     }, {
       title: 'Title 02',
       abstract: 'abstract 02'
+    }, {
+      title: 'Title 03',
+      abstract: 'abstract 03'
     }]);
   };
 
@@ -457,7 +460,29 @@ var PanoVRComponent = /*#__PURE__*/function (_Component) {
 
     var skin = new pano2vrSkin(pano); // load the configuration
 
-    pano.readConfigUrlAsync(this.panovr);
+    pano.readConfigUrl(this.panovr);
+    var nodes = pano.getNodeIds();
+    console.log('getNodeIds', nodes);
+    console.log('getNodeUserdata', pano.getNodeUserdata(nodes[0]));
+    console.log('getNodeLatLng', pano.getNodeLatLng(nodes[0]));
+    console.log('getPointHotspotIds', pano.getPointHotspotIds());
+    console.log('getCurrentPointHotspots', pano.getCurrentPointHotspots());
+    pano.on('sizechanged', function (event) {
+      console.log('sizechanged', event);
+    }); // this.addHotSpot(pano, 0, 0);
+    // this.addHotSpot(pano, 0, -30);
+    // this.addHotSpot(pano, -70, 0);
+  };
+
+  _proto.addHotSpot = function addHotSpot(pano, x, y) {
+    var _this2 = this;
+
+    var hotspot = document.createElement('div');
+    hotspot.classList.add('hotspot');
+    hotspot.addEventListener('click', function (e) {
+      console.log(_this2, e);
+    });
+    pano.addHotspot("hotspot-" + ++PANO_UID, x, y, hotspot);
   };
 
   _proto.onClickedPin = function onClickedPin(index) {
