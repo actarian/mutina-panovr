@@ -412,6 +412,7 @@ ModalOutletComponent.meta = {
 ModalComponent.meta = {
   selector: '[modal]'
 };var PANO_UID = 0;
+var listeners = {};
 
 var PanoVRComponent = /*#__PURE__*/function (_Component) {
   _inheritsLoose(PanoVRComponent, _Component);
@@ -420,11 +421,31 @@ var PanoVRComponent = /*#__PURE__*/function (_Component) {
     return _Component.apply(this, arguments) || this;
   }
 
+  PanoVRComponent.onClickedPin = function onClickedPin(clickedUid, clickedIndex) {
+    // console.log('PanoVRComponent.onClickedPin', clickedUid, clickedIndex);
+    Object.keys(listeners).forEach(function (uid) {
+      if (clickedUid === parseInt(uid)) {
+        var instance = listeners[uid];
+        instance.onClickedPin.call(instance, clickedIndex);
+      }
+    });
+  };
+
+  PanoVRComponent.register = function register(uid, instance) {
+    listeners[uid] = instance;
+  };
+
+  PanoVRComponent.unregister = function unregister(uid) {
+    delete listeners[uid];
+  };
+
   var _proto = PanoVRComponent.prototype;
 
   _proto.onInit = function onInit() {
     var _this = this;
 
+    var uid = this.uid = ++PANO_UID;
+    PanoVRComponent.register(uid, this);
     this.items = [];
     this.item = null;
     this.load$().pipe(operators.first()).subscribe(function (items) {
@@ -432,6 +453,10 @@ var PanoVRComponent = /*#__PURE__*/function (_Component) {
 
       _this.loadPanoVr();
     });
+  };
+
+  _proto.onDestroy = function onDestroy() {
+    PanoVRComponent.unregister(uid);
   };
 
   _proto.load$ = function load$() {
@@ -448,52 +473,301 @@ var PanoVRComponent = /*#__PURE__*/function (_Component) {
   };
 
   _proto.loadPanoVr = function loadPanoVr() {
+    var _this2 = this;
+
     var _getContext = rxcomp.getContext(this),
         node = _getContext.node;
 
     var inner = node.querySelector('.inner');
-    var name = "panovr-" + ++PANO_UID;
-    inner.setAttribute('id', name);
-    window.onClickedPin = this.onClickedPin.bind(this); // create the panorama player with the container
+    var name = "panovr-" + this.uid;
+    inner.setAttribute('id', name); // window.onClickedPin = this.onClickedPin.bind(this);
+    // create the panorama player with the container
 
-    var pano = new pano2vrPlayer(name); // add the skin object
+    var pano = this.pano = new pano2vrPlayer(name); // add the skin object
 
     var skin = new pano2vrSkin(pano); // load the configuration
 
-    pano.readConfigUrl(this.panovr);
-    var nodes = pano.getNodeIds();
-    console.log('getNodeIds', nodes);
-    console.log('getNodeUserdata', pano.getNodeUserdata(nodes[0]));
-    console.log('getNodeLatLng', pano.getNodeLatLng(nodes[0]));
-    console.log('getPointHotspotIds', pano.getPointHotspotIds());
-    console.log('getCurrentPointHotspots', pano.getCurrentPointHotspots());
-    pano.on('sizechanged', function (event) {
-      console.log('sizechanged', event);
-    }); // this.addHotSpot(pano, 0, 0);
-    // this.addHotSpot(pano, 0, -30);
-    // this.addHotSpot(pano, -70, 0);
+    pano.setBasePath(this.getBasePath(this.panovr));
+    this.loadPanoVR(this.panovr, function (xmlString) {
+      _this2.parsePanoVRString(xmlString);
+    });
+    /*
+    this.loadPanoVRXML(this.panovr, (xml) => {
+    	this.parsePanoVRXML(xml);
+    });
+    */
+
+    /*
+    this.readPanoVRXML(this.panovr);
+    */
   };
 
-  _proto.addHotSpot = function addHotSpot(pano, x, y) {
-    var _this2 = this;
+  _proto.getBasePath = function getBasePath(url) {
+    // http://127.0.0.1:42345/mutina-panovr/panovr/exampletiles/node4/cf_0/l_1/c_1/tile_0.jpg
+    var segments = url.split('/');
+    segments.pop();
+    return segments.join('/') + '/';
+  };
 
-    var hotspot = document.createElement('div');
-    hotspot.classList.add('hotspot');
-    hotspot.addEventListener('click', function (e) {
-      console.log(_this2, e);
+  _proto.loadPanoVR = function loadPanoVR(url, callback) {
+    function onLoad() {
+      // console.log(this.responseText);
+      if (typeof callback === 'function') {
+        callback(this.responseText);
+      }
+    }
+
+    var request = new XMLHttpRequest();
+    request.onload = onLoad;
+    request.open('GET', url);
+    request.send();
+  };
+
+  _proto.parsePanoVRString = function parsePanoVRString(xmlString) {
+    xmlString = xmlString.replace(/javascript\:onClickedPin\(/g, "javascript:onClickedPin(" + this.uid + ","); // console.log('xmlString', xmlString);
+
+    var pano = this.pano; // .then(data => console.log('panovr', data));
+
+    pano.readConfigString(xmlString); // pano.readConfigUrl(this.panovr);
+
+    this.initPanoVR();
+  };
+
+  _proto.loadPanoVRXML = function loadPanoVRXML(url, callback) {
+    function onLoad() {
+      // console.log(this.responseXML);
+      if (typeof callback === 'function') {
+        callback(this.responseXML);
+      }
+    }
+
+    var request = new XMLHttpRequest();
+    request.onload = onLoad;
+    request.open('GET', url);
+    request.send();
+    /*
+    fetch(this.panovr)
+    .then(response => response.text())
+    .then(text => (new window.DOMParser()).parseFromString(text, 'text/xml'))
+    .then(xml => {
+    	this.parsePanoVRXML(xml);
     });
-    pano.addHotspot("hotspot-" + ++PANO_UID, x, y, hotspot);
+    */
+  };
+
+  _proto.parsePanoVRXML = function parsePanoVRXML(xml) {
+    var pano = this.pano; // .then(data => console.log('panovr', data));
+
+    pano.readConfigXml(xml); // pano.readConfigUrl(this.panovr);
+
+    this.initPanoVR();
+  };
+
+  _proto.readPanoVRXML = function readPanoVRXML(url) {
+    var pano = this.pano;
+    pano.readConfigUrl(url);
+    this.initPanoVR();
+  };
+
+  _proto.initPanoVR = function initPanoVR() {
+    var _this3 = this;
+
+    var pano = this.pano;
+    var nodes = pano.getNodeIds(); // console.log('getNodeIds', nodes);
+    // console.log('getNodeUserdata', pano.getNodeUserdata(nodes[0]));
+    // console.log('getNodeLatLng', pano.getNodeLatLng(nodes[0]));
+    // console.log('getPointHotspotIds', pano.getPointHotspotIds());
+    // console.log('getCurrentPointHotspots', pano.getCurrentPointHotspots());
+
+    pano.getPointHotspotIds().forEach(function (id) {
+      var hotSpot = pano.getHotspot(id); // console.log('hotSpot', hotSpot);
+
+      if (hotSpot.url.indexOf('onClickedPin') !== -1) {
+        hotSpot.url = "javascript:alert('pippo');"; // console.log('url', hotSpot.url);
+
+        /*
+        hotSpot.div.onClick = function() {
+        	console.log('hello');
+        }
+        */
+
+        /*
+        pano.addHotspot(id,hotSpot.pan,hotSpot.tilt,hotSpot.div);
+        */
+      }
+    });
+    /*
+    pano.on('sizechanged', (event) => {
+    	console.log('sizechanged', event);
+    });
+    */
+
+    pano.on('repaint', function (event) {
+      _this3.onRepaint(event);
+    });
+    this.onClickOutside = this.onClickOutside.bind(this);
+    document.addEventListener('click', this.onClickOutside); // this.addHotSpot(pano, 0, 0);
+    // this.addHotSpot(pano, 0, -30);
+    // this.addHotSpot(pano, -70, 0);
+  }
+  /*
+  addHotSpot(pano, x, y) {
+  	const hotspot = document.createElement('div');
+  	hotspot.classList.add('hotspot');
+  	hotspot.addEventListener('click', (e) => {
+  		console.log(this, e);
+  	});
+  	pano.addHotspot(`hotspot-${++PANO_UID}`, x, y, hotspot);
+  }
+  */
+  ;
+
+  _proto.onClickOutside = function onClickOutside(event) {
+    // console.log('onClickOutside', event.target);
+    var _getContext2 = rxcomp.getContext(this),
+        node = _getContext2.node;
+
+    var toast = node.querySelector('.toast');
+
+    if (!PanoVRComponent.isChildOfNode(event.target, toast)) {
+      this.index = null;
+      this.item = null;
+      this.pushChanges();
+    }
+  };
+
+  PanoVRComponent.isChildOfNode = function isChildOfNode(child, node) {
+    if (!child || !node) {
+      return false;
+    }
+
+    if (child === node) {
+      return true;
+    } else if (child.parentNode) {
+      return this.isChildOfNode(child.parentNode, node);
+    } else {
+      return false;
+    }
   };
 
   _proto.onClickedPin = function onClickedPin(index) {
-    console.log('onClickedPin', index);
+    // console.log('onClickedPin', index);
+    this.index = index;
     this.item = this.items[index];
     this.pushChanges();
     this.pin.next(index);
+    this.onRepaint();
+  };
+
+  _proto.onRepaint = function onRepaint() {
+    var _this4 = this;
+
+    var index = this.index;
+
+    if (index != null) {
+      var _getContext3 = rxcomp.getContext(this),
+          node = _getContext3.node;
+
+      var toast = node.querySelector('.toast');
+
+      if (toast) {
+        var pano = this.pano;
+        var hotSpot = pano.getPointHotspotIds().map(function (id) {
+          return pano.getHotspot(id);
+        }).find(function (hotSpot) {
+          return hotSpot.url === "javascript:onClickedPin(" + _this4.uid + "," + index + ");";
+        });
+        var x = 0;
+        var y = 0;
+
+        if (hotSpot) {
+          var nodeRect = node.getBoundingClientRect();
+          var hotSpotDiv = hotSpot.div;
+          var rect = hotSpotDiv.getBoundingClientRect(); // console.log(rect, hotSpot, hotSpotDiv);
+
+          x = rect.x - nodeRect.x;
+          y = rect.y - nodeRect.y;
+          var dx = x / nodeRect.width;
+          var dy = y / nodeRect.height;
+          var ax = Math.floor(dx * 3) - 1;
+          var ay = Math.floor(dy * 3) - 1;
+          toast.classList.remove('left', 'right', 'top', 'bottom');
+          /*
+          toast.classList.remove('left', 'center', 'right', 'top', 'middle', 'bottom');
+          toast.classList.add(['left', 'center', 'right'][ax]);
+          toast.classList.add(['top', 'middle', 'bottom'][ay]);
+          */
+
+          var tx = x;
+          var ty = y;
+          var tw = toast.offsetWidth;
+          var th = toast.offsetHeight;
+          var gx = 20;
+          var gy = 20;
+
+          if (ax < 0) {
+            // left
+            if (ay < 0) {
+              // top
+              tx = x + gx;
+              ty = y + gy;
+            } else if (ay === 0) {
+              // middle
+              tx = x + gx;
+              ty = y - th / 2;
+              toast.classList.add('left');
+            } else if (ay > 0) {
+              // bottom
+              tx = x + gx;
+              ty = y - gy - th;
+            }
+          } else if (ax === 0) {
+            // center
+            if (ay < 0) {
+              // top
+              tx = x - tw / 2;
+              ty = y + gy;
+              toast.classList.add('top');
+            } else if (ay === 0) {
+              // middle
+              tx = x - tw / 2;
+              ty = y + gy;
+              toast.classList.add('top');
+            } else if (ay > 0) {
+              // bottom
+              tx = x - tw / 2;
+              ty = y - gy - th;
+              toast.classList.add('bottom');
+            }
+          } else if (ax > 0) {
+            // right
+            if (ay < 0) {
+              // top
+              tx = x - gx - tw;
+              ty = y + gy;
+            } else if (ay === 0) {
+              // middle
+              tx = x - gx - tw;
+              ty = y - th / 2;
+              toast.classList.add('right');
+            } else if (ay > 0) {
+              // bottom
+              tx = x - gx - tw;
+              ty = y - gy - th;
+            }
+          } // console.log(ax, ay, tx, ty, tw, th);
+
+
+          toast.style.position = 'absolute';
+          toast.style.left = tx + "px";
+          toast.style.top = ty + "px"; // [style]="{ position: 'absolute', left: x + 'px', top: y + 'px' }"
+        }
+      }
+    }
   };
 
   _proto.onToastClose = function onToastClose(event) {
-    console.log('onToastClose');
+    // console.log('onToastClose');
     this.item = null;
     this.pushChanges();
   };
@@ -504,7 +778,8 @@ PanoVRComponent.meta = {
   selector: '[panovr]',
   outputs: ['pin'],
   inputs: ['panovr']
-};var AppModule = /*#__PURE__*/function (_Module) {
+};
+window.onClickedPin = PanoVRComponent.onClickedPin;var AppModule = /*#__PURE__*/function (_Module) {
   _inheritsLoose(AppModule, _Module);
 
   function AppModule() {
