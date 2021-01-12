@@ -41,6 +41,11 @@ export default class PanoVRComponent extends Component {
 		delete listeners[uid];
 	}
 
+	getNode() {
+		const { node } = getContext(this);
+		return node;
+	}
+
 	onInit() {
 		const uid = this.uid = ++PANO_UID;
 		PanoVRComponent.register(uid, this);
@@ -60,17 +65,18 @@ export default class PanoVRComponent extends Component {
 
 	load$() {
 		return of([
-			{ title: 'Title 01', abstract: 'abstract 01' },
-			{ title: 'Title 02', abstract: 'abstract 02' },
-			{ title: 'Title 03', abstract: 'abstract 03' },
+			{ id: 1, title: 'End Piece L', abstract: 'Black painted metal on dark oak', image: '/mutina-panovr/img/panovr/end-piece-l.jpg',  link: { url: '#', title: 'Accents Wood Collection' } },
+			{ id: 2, title: 'End Piece L 2', abstract: 'Black painted metal on dark oak', image: '/mutina-panovr/img/panovr/end-piece-l.jpg', link: { url: '#', title: 'Accents Wood Collection' } },
+			{ id: 3, title: 'End Piece L 3', abstract: 'Black painted metal on dark oak', image: '/mutina-panovr/img/panovr/end-piece-l.jpg', link: { url: '#', title: 'Accents Wood Collection' } },
 		]);
 	}
 
 	loadPanoVr() {
-		const { node } = getContext(this);
-		const inner = node.querySelector('.inner');
+		const node = this.getNode();
 		const name = `panovr-${this.uid}`;
+		const inner = node.querySelector('.panovr__inner');
 		inner.setAttribute('id', name);
+		console.log(inner);
 		// window.onClickedPin = this.onClickedPin.bind(this);
 		// create the panorama player with the container
 		const pano = this.pano = new pano2vrPlayer(name);
@@ -208,11 +214,12 @@ export default class PanoVRComponent extends Component {
 
 	onClickOutside(event) {
 		// console.log('onClickOutside', event.target);
-		const { node } = getContext(this);
-		const toast = node.querySelector('.toast');
+		const node = this.getNode();
+		const toast = node.querySelector('.panovr-toast');
 		if (!PanoVRComponent.isChildOfNode(event.target, toast)) {
 			this.index = null;
 			this.item = null;
+			this.removeToast();
 			this.pushChanges();
 		}
 	}
@@ -234,16 +241,49 @@ export default class PanoVRComponent extends Component {
 		// console.log('onClickedPin', index);
 		this.index = index;
 		this.item = this.items[index];
-		this.pushChanges();
+		this.addToast(this.item);
+		// this.pushChanges();
 		this.pin.next(index);
 		this.onRepaint();
+	}
+
+	addToast(item) {
+		this.removeToast();
+		const template = /* html */`
+		<div class="panovr-toast">
+			<div class="panovr-toast__content">
+				<div class="panovr-toast__title">${item.title}</div>
+				<div class="panovr-toast__abstract">${item.abstract}</div>
+				<div class="panovr-toast__group-cta">
+					<a class="panovr-toast__cta" href="${item.link.url}">${item.link.title}</a>
+					<a class="panovr-toast__cta">Add to samples</a>
+				</div>
+			</div>
+			<div class="panovr-toast__picture">
+				<img src="${item.image}" />
+			</div>
+			<!-- <div class="panovr-toast__close" (click)="onToastClose($event)">x</div> -->
+		</div>
+		`;
+		const node = this.getNode();
+		const temp = document.createElement('div');
+		temp.innerHTML = template;
+		node.appendChild(temp.firstElementChild);
+	}
+
+	removeToast() {
+		const node = this.getNode();
+		const toast = node.querySelector('.panovr-toast');
+		if (toast) {
+			toast.parentElement.removeChild(toast);
+		}
 	}
 
 	onRepaint() {
 		const index = this.index;
 		if (index != null) {
-			const { node } = getContext(this);
-			const toast = node.querySelector('.toast');
+			const node = this.getNode();
+			const toast = node.querySelector('.panovr-toast');
 			if (toast) {
 				const pano = this.pano;
 				const hotSpot = pano.getPointHotspotIds().map(id => pano.getHotspot(id)).find(hotSpot => {
@@ -272,8 +312,8 @@ export default class PanoVRComponent extends Component {
 					let ty = y;
 					const tw = toast.offsetWidth;
 					const th = toast.offsetHeight;
-					const gx = 20;
-					const gy = 20;
+					const gx = 30;
+					const gy = 30;
 					if (ax < 0) {
 						// left
 						if (ay < 0) {

@@ -3517,7 +3517,7 @@ errors-component {
     transform: rotate(360deg); } }
 
 body {
-  padding: 20px 0 0 0; }
+  padding: 0; }
 
 .panovr {
   position: relative;
@@ -3540,7 +3540,13 @@ body {
     width: 100%;
     height: 100%;
     object-fit: cover; }
-  .panovr > .inner {
+  .panovr > .panovr__inner {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
     overflow: hidden; }
   .panovr .hotspot {
     display: block;
@@ -3549,76 +3555,77 @@ body {
     border-radius: 10px;
     background: yellow; }
 
-.toast {
+.panovr-toast {
   position: absolute;
+  display: flex;
+  width: 100%;
+  max-width: 450px;
+  min-height: 225px;
   top: 50%;
   left: 50%;
+  font-size: 16px;
+  font-weight: 300;
+  line-height: 1.4;
   background: white;
   color: #121212;
   border-radius: 3px;
   box-shadow: 0 20px 20px -5px rgba(0, 0, 0, 0.15);
-  padding: 10px 20px;
   z-index: 100;
-  pointer-events: none;
-  /*
-	&.top {
-		transform: translateY(-100);
-	}
-	&.middle {
-		transform: translateY(-50%);
-	}
-	&.bottom {
-		transform: translateY(0);
-	}
-	&.left {
-		transform: translateX(0);
-		&.top {
-			transform: translateX(0) translateY(0);
-		}
-		&.middle {
-			transform: translateX(0) translateY(-50%);
-		}
-		&.bottom {
-			transform: translateX(0) translateY(-100%);
-		}
-	}
-	&.center {
-		transform: translateX(-50%);
-		&.top {
-			transform: translateX(-50%) translateY(0);
-		}
-		&.middle {
-			// transform: translateX(-50%) translateY(-50%);
-			transform: translateX(-50%) translateY(0);
-		}
-		&.bottom {
-			transform: translateX(-50%) translateY(-100%);
-		}
-	}
-	&.right {
-		transform: translateX(-100%);
-		&.top {
-			transform: translateX(-100%) translateY(0);
-		}
-		&.middle {
-			transform: translateX(-100%) translateY(-50%);
-		}
-		&.bottom {
-			transform: translateX(-100%) translateY(-100%);
-		}
-	}
-	*/
-  width: 100%;
-  max-width: 360px;
-  font-size: 16px;
-  font-weight: 300;
-  line-height: 1.4; }
-  .toast a, .toast button {
+  pointer-events: none; }
+  .panovr-toast a, .panovr-toast button {
     pointer-events: auto; }
-  .toast .title {
-    font-size: inherit;
-    font-weight: inherit; }
-  .toast .close {
+  .panovr-toast__content, .panovr-toast__picture {
+    flex: 1 0 50%;
+    max-width: 50%; }
+  .panovr-toast__content {
+    padding: 25px 25px 25px 25px;
+    display: flex;
+    flex-direction: column; }
+  .panovr-toast__picture {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 0 3px 3px 0;
+    overflow: hidden; }
+    .panovr-toast__picture > img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover; }
+  .panovr-toast__group-cta {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end; }
+  .panovr-toast__title {
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: 600;
+    text-transform: uppercase; }
+  .panovr-toast__abstract {
+    font-size: 14px;
+    line-height: 20px; }
+  .panovr-toast__cta {
+    display: inline-block;
+    padding: 0;
+    border: none;
+    outline: none;
+    background: none;
+    -webkit-appearance: none;
+            appearance: none;
+    font: inherit;
+    cursor: pointer;
+    -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+    -webkit-font-smoothing: subpixel-antialiased;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    font-size: 15px;
+    line-height: 24px;
+    margin-top: 5px; }
+    .panovr-toast__cta, .panovr-toast__cta:active, .panovr-toast__cta:focus, .panovr-toast__cta:hover, .panovr-toast__cta:visited {
+      color: inherit;
+      text-decoration: underline;
+      outline: none; }
+  .panovr-toast__close {
     position: absolute;
     display: flex;
     justify-content: center;
@@ -3631,64 +3638,54 @@ body {
     line-height: 1;
     cursor: pointer; }
 
-.toast.left:before {
+.panovr-toast.left:before {
   content: '';
   position: absolute;
   width: 0;
   height: 0;
   border-style: solid;
-  border-width: 7px 7px 7px 0;
+  border-width: 12px 12px 12px 0;
   border-color: transparent #ffffff transparent transparent;
-  left: -7px;
+  left: -12px;
   top: 50%;
-  margin-top: -7px; }
+  margin-top: -12px; }
 
-.toast.right:before {
+.panovr-toast.right:before {
   content: '';
   position: absolute;
   width: 0;
   height: 0;
   border-style: solid;
-  border-width: 7px 0 7px 7px;
+  border-width: 12px 0 12px 12px;
   border-color: transparent transparent transparent #ffffff;
-  right: -7px;
+  right: -12px;
   top: 50%;
-  margin-top: -7px; }
+  margin-top: -12px; }
 
-.toast.top:before {
+.panovr-toast.top:before {
   content: '';
   position: absolute;
   width: 0;
   height: 0;
   border-style: solid;
-  border-width: 0 7px 7px 7px;
+  border-width: 0 12px 12px 12px;
   border-color: transparent transparent #ffffff transparent;
   left: 50%;
-  top: -7px;
-  margin-left: -7px; }
+  top: -12px;
+  margin-left: -12px; }
 
-.toast.bottom:before {
+.panovr-toast.bottom:before {
   content: '';
   position: absolute;
   width: 0;
   height: 0;
   border-style: solid;
-  border-width: 7px 7px 0 7px;
+  border-width: 12px 12px 0 12px;
   border-color: #ffffff transparent transparent transparent;
   left: 50%;
-  bottom: -7px;
-  margin-left: -7px; }
+  bottom: -12px;
+  margin-left: -12px; }
 
-/*
-%angle-left-top {
-	@extend %angle-left;
-	&:before {
-		left: -7px;
-		top: 7px;
-		margin-top: 0;
-	}
-}
-*/
 @keyframes scale-up-center {
   0% {
     opacity: 0;

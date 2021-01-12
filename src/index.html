@@ -3,15 +3,24 @@
 <!-- @@block = main-->
 
 <section class="section--panovr">
-	<div class="container">
-		<div class="panovr" panovr="/mutina-panovr/panovr/example/pano.xml">
-			<div class="inner">Loading...</div>
-			<div class="toast" *if="item">
-				<div class="title" [innerHTML]="item.title"></div>
-				<div class="abstract" [innerHTML]="item.abstract"></div>
-				<!-- <div class="close" (click)="onToastClose($event)">x</div> -->
+	<div class="panovr" panovr="/mutina-panovr/panovr/example/pano.xml">
+		<div class="panovr__inner">Loading...</div>
+		<!--
+		<div class="panovr-toast" *if="item">
+			<div class="panovr-toast__content">
+				<div class="panovr-toast__title" [innerHTML]="item.title"></div>
+				<div class="panovr-toast__abstract" [innerHTML]="item.abstract"></div>
+				<div class="panovr-toast__group-cta">
+					<a class="panovr-toast__cta" [href]="item.link.url" *if="item.link"><span [innerHTML]="item.link.title"></span></a>
+					<a class="panovr-toast__cta" href="#"><span>Add to samples</span></a>
+				</div>
 			</div>
+			<div class="panovr-toast__picture">
+				<img [src]="item.image" *if="item.image" />
+			</div>
+			<div class="panovr-toast__close" (click)="onToastClose($event)">x</div>
 		</div>
+		-->
 	</div>
 </section>
 

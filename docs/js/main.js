@@ -1,6 +1,6 @@
 /**
  * @license mutina-panovr v1.0.0
- * (c) 2020 Luca Zampetti <lzampetti@gmail.com>
+ * (c) 2021 Luca Zampetti <lzampetti@gmail.com>
  * License: MIT
  */
 
@@ -441,6 +441,13 @@ var PanoVRComponent = /*#__PURE__*/function (_Component) {
 
   var _proto = PanoVRComponent.prototype;
 
+  _proto.getNode = function getNode() {
+    var _getContext = rxcomp.getContext(this),
+        node = _getContext.node;
+
+    return node;
+  };
+
   _proto.onInit = function onInit() {
     var _this = this;
 
@@ -461,26 +468,43 @@ var PanoVRComponent = /*#__PURE__*/function (_Component) {
 
   _proto.load$ = function load$() {
     return rxjs.of([{
-      title: 'Title 01',
-      abstract: 'abstract 01'
+      id: 1,
+      title: 'End Piece L',
+      abstract: 'Black painted metal on dark oak',
+      image: '/mutina-panovr/img/panovr/end-piece-l.jpg',
+      link: {
+        url: '#',
+        title: 'Accents Wood Collection'
+      }
     }, {
-      title: 'Title 02',
-      abstract: 'abstract 02'
+      id: 2,
+      title: 'End Piece L 2',
+      abstract: 'Black painted metal on dark oak',
+      image: '/mutina-panovr/img/panovr/end-piece-l.jpg',
+      link: {
+        url: '#',
+        title: 'Accents Wood Collection'
+      }
     }, {
-      title: 'Title 03',
-      abstract: 'abstract 03'
+      id: 3,
+      title: 'End Piece L 3',
+      abstract: 'Black painted metal on dark oak',
+      image: '/mutina-panovr/img/panovr/end-piece-l.jpg',
+      link: {
+        url: '#',
+        title: 'Accents Wood Collection'
+      }
     }]);
   };
 
   _proto.loadPanoVr = function loadPanoVr() {
     var _this2 = this;
 
-    var _getContext = rxcomp.getContext(this),
-        node = _getContext.node;
-
-    var inner = node.querySelector('.inner');
+    var node = this.getNode();
     var name = "panovr-" + this.uid;
-    inner.setAttribute('id', name); // window.onClickedPin = this.onClickedPin.bind(this);
+    var inner = node.querySelector('.panovr__inner');
+    inner.setAttribute('id', name);
+    console.log(inner); // window.onClickedPin = this.onClickedPin.bind(this);
     // create the panorama player with the container
 
     var pano = this.pano = new pano2vrPlayer(name); // add the skin object
@@ -624,14 +648,13 @@ var PanoVRComponent = /*#__PURE__*/function (_Component) {
 
   _proto.onClickOutside = function onClickOutside(event) {
     // console.log('onClickOutside', event.target);
-    var _getContext2 = rxcomp.getContext(this),
-        node = _getContext2.node;
-
-    var toast = node.querySelector('.toast');
+    var node = this.getNode();
+    var toast = node.querySelector('.panovr-toast');
 
     if (!PanoVRComponent.isChildOfNode(event.target, toast)) {
       this.index = null;
       this.item = null;
+      this.removeToast();
       this.pushChanges();
     }
   };
@@ -654,9 +677,30 @@ var PanoVRComponent = /*#__PURE__*/function (_Component) {
     // console.log('onClickedPin', index);
     this.index = index;
     this.item = this.items[index];
-    this.pushChanges();
+    this.addToast(this.item); // this.pushChanges();
+
     this.pin.next(index);
     this.onRepaint();
+  };
+
+  _proto.addToast = function addToast(item) {
+    this.removeToast();
+    var template =
+    /* html */
+    "\n\t\t<div class=\"panovr-toast\">\n\t\t\t<div class=\"panovr-toast__content\">\n\t\t\t\t<div class=\"panovr-toast__title\">" + item.title + "</div>\n\t\t\t\t<div class=\"panovr-toast__abstract\">" + item.abstract + "</div>\n\t\t\t\t<div class=\"panovr-toast__group-cta\">\n\t\t\t\t\t<a class=\"panovr-toast__cta\" href=\"" + item.link.url + "\">" + item.link.title + "</a>\n\t\t\t\t\t<a class=\"panovr-toast__cta\">Add to samples</a>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t\t<div class=\"panovr-toast__picture\">\n\t\t\t\t<img src=\"" + item.image + "\" />\n\t\t\t</div>\n\t\t\t<!-- <div class=\"panovr-toast__close\" (click)=\"onToastClose($event)\">x</div> -->\n\t\t</div>\n\t\t";
+    var node = this.getNode();
+    var temp = document.createElement('div');
+    temp.innerHTML = template;
+    node.appendChild(temp.firstElementChild);
+  };
+
+  _proto.removeToast = function removeToast() {
+    var node = this.getNode();
+    var toast = node.querySelector('.panovr-toast');
+
+    if (toast) {
+      toast.parentElement.removeChild(toast);
+    }
   };
 
   _proto.onRepaint = function onRepaint() {
@@ -665,10 +709,8 @@ var PanoVRComponent = /*#__PURE__*/function (_Component) {
     var index = this.index;
 
     if (index != null) {
-      var _getContext3 = rxcomp.getContext(this),
-          node = _getContext3.node;
-
-      var toast = node.querySelector('.toast');
+      var node = this.getNode();
+      var toast = node.querySelector('.panovr-toast');
 
       if (toast) {
         var pano = this.pano;
@@ -702,8 +744,8 @@ var PanoVRComponent = /*#__PURE__*/function (_Component) {
           var ty = y;
           var tw = toast.offsetWidth;
           var th = toast.offsetHeight;
-          var gx = 20;
-          var gy = 20;
+          var gx = 30;
+          var gy = 30;
 
           if (ax < 0) {
             // left
