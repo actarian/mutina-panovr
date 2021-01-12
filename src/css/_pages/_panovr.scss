@@ -13,13 +13,16 @@
 		overflow: hidden;
 	}
 
-	.hotspot {
-		display: block;
-		width: 20px;
-		height: 20px;
-		border-radius: 10px;
-		background: yellow;
-	}
+    .ggskin_external {
+        &>img.ggskin_external {
+            transition: all ease-in-out 250ms;
+        }
+        &:hover {
+            &>img.ggskin_external {
+                transform: scale(1.1,1.1);
+            }
+        }
+    }
 }
 
 .panovr-toast {
@@ -39,7 +42,7 @@
 	box-shadow: 0 20px 20px -5px rgba(0,0,0,0.15);
 	z-index: 100;
 	pointer-events: none;
-	// animation: scale-up-center 0.4s cubic-bezier(0.680, -0.550, 0.265, 1.550) both;
+	animation: scale-up-center 0.4s cubic-bezier(0.680, -0.550, 0.265, 1.550) both;
 
 	a, button {
 		pointer-events: auto;
@@ -216,11 +219,11 @@
 @keyframes scale-up-center {
 	0% {
 		opacity: 0;
-		transform: translateX(-50%) translateY(-50%) scale(0.5);
+		transform: scale(0.5);
 	}
 
 	100% {
 		opacity: 1;
-		transform: translateX(-50%) translateY(-50%) scale(1);
+		transform: scale(1);
 	}
 }

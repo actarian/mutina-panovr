@@ -9,18 +9,6 @@ let PANO_UID = 0;
 
 const listeners = {};
 
-const alignment = {
-	TL: 'TL',
-	TO: 'TO',
-	TR: 'TR',
-	LE: 'LE',
-	CE: 'CE',
-	RI: 'RI',
-	BL: 'BL',
-	BO: 'BO',
-	BR: 'BR',
-};
-
 export default class PanoVRComponent extends Component {
 
 	static onClickedPin(clickedUid, clickedIndex) {
